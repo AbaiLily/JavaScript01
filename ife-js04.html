@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>IFE JavaScript Task 04</title>
+	<style type="text/css">
+		span{
+			padding: 10px 10px 10px 10px;
+			margin:10px 5px;
+			height: 30px;
+			display: inline-block;
+			line-height: 20px;
+			background-color: #C16A56;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<input type="text" name="" id="num">
+	<button id="left-in" value="">左侧入</button>
+	<button id="right-in" value="">右侧入</button>
+	<button id="left-out" value="">左侧出</button>
+	<button id="right-out" value="">右侧出</button>
+
+	<!-- 数字队列 -->
+	<div id="kuai"></div>
+
+	<script type="text/javascript">
+		/**
+		* leftIn方法
+		* 点击"左侧入"，将input中输入的数字从左侧插入队列中
+		*/
+		function leftIn(kuai){
+			var num = document.getElementById('num').value;
+			if(checkInput(num)){
+				var span = document.createElement("span");
+				span.innerHTML = num;
+
+				var spanList = kuai.childNodes;
+				kuai.insertBefore(span,spanList[0]);
+				//insertBefore() 方法在您指定的已有子节点之前插入新的子节点
+			}
+		}
+
+		/**
+		* rightIn方法
+		* 点击"右侧入"，将input中输入的数字从右侧插入队列中
+		*/
+		function rightIn(kuai){
+			var num = document.getElementById('num').value;
+			if(checkInput(num)){
+				if(checkInput(num)){
+					var span = document.createElement("span");
+					span.innerHTML = num;
+
+					kuai.appendChild(span);
+					//appendChild() 方法向节点添加最后一个子节点
+				}
+			}
+		}
+
+		/**
+		* leftOut方法
+		* 点击"左侧出"，读取并删除队列左侧第一个元素，并弹窗显示元素中数值
+		*/
+		function leftOut(kuai){
+			var childs = kuai.childNodes;
+			alert(childs[0].innerHTML);
+			kuai.removeChild(childs[0]);
+		}
+
+		/**
+		* rightOut方法
+		* 点击"右侧出"，读取并删除队列右侧第一个元素，并弹窗显示元素中数值
+		*/
+		function rightOut(kuai){
+			var childs = kuai.childNodes;
+			alert(childs[childs.length - 1].innerHTML);	
+			//先显示元素中的数值 NodeList具有时效性
+			kuai.removeChild(childs[childs.length - 1]);
+		}
+
+		/**
+		* 输入验证
+		* 输入不能为空，而且只能是整数
+		*/
+		function checkInput(num){
+			reg = /^[-+]?\d*$/;
+			if(num == ""){
+				alert("输入不能为空");
+				return false;
+			}else if(!reg.test(num)){
+				alert("只能输入整数");
+				return false;
+			}else return true;
+		}
+
+		function init(){
+			var kuai = document.getElementById("kuai");
+
+			document.getElementById("left-in").onclick = function() {
+				leftIn(kuai);
+			};
+			document.getElementById("right-in").onclick = function() {
+				rightIn(kuai);
+			};
+			document.getElementById("left-out").onclick = function() {
+				leftOut(kuai);
+			};
+			document.getElementById("right-out").onclick = function() {
+				rightOut(kuai);
+			};
+
+			/**
+			* deleteClic验证
+			* 点击队列中任何一个元素，则该元素会被从队列中删除
+			* 动态生成的节点绑定事件需要利用事件委托原理
+			*/
+			document.getElementById("kuai").onclick = function(e){
+				e = e || window.event;
+				var t = e.target || e.srcElement;
+				var tagName = t.tagName;
+				if(tagName == 'SPAN') {
+					kuai.removeChild(t);
+				} 
+			}
+		}
+
+		init();
+	</script>
+</body>
+</html>
