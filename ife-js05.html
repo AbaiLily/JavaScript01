@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>IFE JavaScript Task 05</title>
+	<style type="text/css">
+		span{
+			display: inline-block;
+			margin: 10px 5px;
+			padding: 0px 10px;
+			background-color: #4DA9EE;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<input type="text" name="" id="num">
+	<button id="left-in" value="">左侧入</button>
+	<button id="right-in" value="">右侧入</button>
+	<button id="left-out" value="">左侧出</button>
+	<button id="right-out" value="">右侧出</button>
+	<button id="sort">排序</button>
+
+	<!-- 数字队列 -->
+	<div id="kuai"></div>
+
+	<script type="text/javascript">
+	/**
+	* leftIn方法
+	* 点击"左侧入"，将input中输入的数字从左侧插入队列中
+	*/
+	function leftIn(kuai){
+		var num = document.getElementById('num').value;
+		if(checkInput(num)){
+			var span = document.createElement("span");
+			span.style.height = num;
+			//动态生成的元素在元素生成的时候绑定事件或者利用事件委托，事件委托性能更好
+			var spanList = kuai.childNodes;
+			if(spanList.length > 60){
+				alert("队列元素不大于60个。");
+			}else {
+				kuai.insertBefore(span,spanList[0]);
+			}
+			//insertBefore() 方法 在您指定的已有子节点之前插入新的子节点
+		}
+	}
+
+	/**
+	* rightIn方法
+	* 点击"右侧入"，将input中输入的数字从右侧插入队列中
+	*/
+	function rightIn(kuai){
+		var num = document.getElementById('num').value;
+		if(checkInput(num)){
+			var span = document.createElement("span");
+			span.style.height = num;
+
+			var spanList = kuai.childNodes;
+			if(spanList.length > 60){
+				alert("队列元素不大于60个。");
+			}else {
+				kuai.appendChild(span);
+			}
+			//appendChild() 方法向节点添加最后一个子节点
+		}
+	}
+
+	/**
+	* leftOut方法
+	* 点击"左侧出"，读取并删除队列左侧第一个元素，并弹窗显示元素中数值
+	*/
+	function leftOut(kuai){
+		var childs = kuai.childNodes;
+		alert(childs[0].innerHTML);
+		kuai.removeChild(childs[0]);
+	}
+
+	/**
+	* rightOut方法
+	* 点击"右侧出"，读取并删除队列右侧第一个元素，并弹窗显示元素中数值
+	*/
+	function rightOut(kuai){
+		var childs = kuai.childNodes;
+		alert(childs[childs.length - 1].innerHTML);	
+		//先显示元素中的数值 NodeList具有时效性
+		kuai.removeChild(childs[childs.length - 1]);
+	}
+
+	/**
+	* 输入验证
+	* 输入不能为空，而且只能是整数
+	*/
+	function checkInput(num){
+		reg = /^[-+]?\d*$/;		//实数的正则表达式
+		if(num == ""){
+			alert("输入不能为空");
+			return false;
+		}else if(!reg.test(num)){
+			alert("只能输入整数");
+			return false;
+		}else if(reg.test(num) && (num<10 || num > 100)){
+			alert("只能输入10-100以内的实数");
+			return false;
+		} 
+		else return true;
+	}
+
+	function emptyInput(input){
+		input.value = "";
+	}
+
+	//对队列冒泡排序
+	function bubbleSort(kuai) {
+		var childs = kuai.childNodes;
+		var flag = false;	//记录是否存在交换，若没有交换则退出
+
+		for(var i=0; i < childs.length; i++){
+			for(var j=0; j<childs.length - 1; j++){
+				if(childs[j].style.height > childs[j+1].style.height) {
+					flag = true;
+					var height = childs[j].style.height;
+					childs[j].style.height = childs[j+1].style.height;
+					childs[j+1].style.height = height;
+				}
+			}
+			if(!flag) break;	//上一趟比较中不存在交换，则退出排序
+		}
+	}
+
+	function init(){
+		var kuai = document.getElementById("kuai");
+		var input = document.getElementById("num");		//获取表单元素
+
+		document.getElementById("left-in").onclick = function() {
+			leftIn(kuai);
+			emptyInput(input)
+		};
+
+		document.getElementById("right-in").onclick = function() {
+			rightIn(kuai);
+			emptyInput(input)
+		};
+
+		document.getElementById("left-out").onclick = function() {
+			leftOut(kuai);
+		};
+
+		document.getElementById("right-out").onclick = function() {
+			rightOut(kuai);
+		};
+
+		document.getElementById("sort").onclick = function() {
+			bubbleSort(kuai);
+		}
+
+		/**
+		* deleteClic验证
+		* 点击队列中任何一个元素，则该元素会被从队列中删除
+		* 动态生成的节点绑定事件需要利用事件委托原理
+		*/
+		document.getElementById("kuai").onclick = function(e){
+			e = e || window.event;
+			var t = e.target || e.srcElement;	//t:目标对象
+			var tagName = t.tagName;
+			if(tagName == 'SPAN') {
+				kuai.removeChild(t);
+			} 
+		}
+	}
+
+	init();
+	</script>
+</body>
+</html>
